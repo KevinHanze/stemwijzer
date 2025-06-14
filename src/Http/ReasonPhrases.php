@@ -7,7 +7,7 @@ namespace Framework\Http;
  */
 class ReasonPhrases
 {
-    const array RFC_7231_REASON_PHRASES = [
+    const  RFC_7231_REASON_PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         200 => 'OK',
