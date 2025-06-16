@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Framework\Http;
 
-use Framework\Http\Request;
-use Framework\Http\Stream;
-use Framework\Http\Uri;
-
 final class RequestFactory
 {
     public static function fromGlobals(): Request

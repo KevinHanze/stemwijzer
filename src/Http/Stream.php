@@ -8,7 +8,7 @@ use Psr\Http\Message\StreamInterface;
 
 final class Stream implements StreamInterface
 {
-    private string $content; // Alle data in 1 string
+    private string $content;
     private int $pointer = 0;
 
     public function __construct(string $content = '')

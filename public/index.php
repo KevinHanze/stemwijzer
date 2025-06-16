@@ -7,25 +7,41 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Framework\Http\RequestFactory;
 use Framework\Http\Response;
 use Framework\Http\Stream;
+use Framework\Kernel\Kernel;
+use Framework\Routing\Router;
+use Framework\Routing\NotFoundException;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
-// Maak request object vanuit globals
 $request = RequestFactory::fromGlobals();
 
-// Stel inhoud samen op basis van de request
-$bodyText = "✅ Je gebruikte methode: " . $request->getMethod() . "\n";
-$bodyText .= "🔗 URI: " . (string) $request->getUri() . "\n";
-$bodyText .= "📝 Query: " . json_encode($request->getQueryParams()) . "\n";
-$bodyText .= "📩 Form: " . json_encode($request->getParsedBody()) . "\n";
-$bodyText .= "🍪 Cookies: " . json_encode($request->getCookieParams()) . "\n";
+$router = new Router();
 
-// Bouw response
-$response = new Response(
-    200,
-    ['Content-Type' => ['text/plain']],
-    new Stream($bodyText)
-);
+$helloHandler = new class implements RequestHandlerInterface {
+    public function handle(ServerRequestInterface $request): ResponseInterface {
+        return new Response(
+            200,
+            ['Content-Type' => ['text/plain']],
+            new Stream("Hello vanaf /hello")
+        );
+    }
+};
 
-// Verstuur HTTP headers
+$router->addRoute('GET', '/hello', $helloHandler);
+
+$kernel = new Kernel($router);
+
+try {
+    $response = $kernel->handle($request);
+} catch (NotFoundException $e) {
+    $response = new Response(
+        404,
+        ['Content-Type' => ['text/plain']],
+        new Stream("Pagina niet gevonden")
+    );
+}
+
 http_response_code($response->getStatusCode());
 foreach ($response->getHeaders() as $name => $values) {
     foreach ($values as $value) {
@@ -33,5 +49,4 @@ foreach ($response->getHeaders() as $name => $values) {
     }
 }
 
-// Verstuur body
 echo $response->getBody();
