@@ -164,12 +164,12 @@ final class Request implements ServerRequestInterface
 
     public function getUploadedFiles(): array
     {
-        return []; // voor nu leeg
+        return [];
     }
 
     public function withUploadedFiles(array $uploadedFiles): Request
     {
-        return $this; // dummy voorlopig
+        return $this;
     }
 
     public function getRequestTarget(): string
@@ -181,5 +181,6 @@ final class Request implements ServerRequestInterface
     public function withRequestTarget(string $requestTarget): RequestInterface
     {
         // TODO: Implement withRequestTarget() method.
+        return $this;
     }
 }
