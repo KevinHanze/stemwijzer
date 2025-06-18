@@ -12,7 +12,7 @@ final class Router implements RouterInterface
 
     private array $routes = [];
 
-    public function addRoute(string $method, string $path, requestHandlerInterface $handler): void {
+    public function addRoute(string $method, string $path, RequestHandlerInterface $handler): void {
         $this->routes[] = new Route($method, $path, $handler);
     }
 

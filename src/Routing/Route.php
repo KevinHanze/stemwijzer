@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Framework\Routing;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Framework\Http\Request;
 
 final class Route {
     private string $method;
@@ -19,7 +19,7 @@ final class Route {
         $this->handler = $handler;
     }
 
-    public function matches(Request $request): bool {
+    public function matches(ServerRequestInterface $request): bool {
         return $this->method === strtoupper($request->getMethod())
             && $this->path === $request->getUri()->getPath();
     }

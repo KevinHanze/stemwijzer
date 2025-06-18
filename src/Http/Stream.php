@@ -21,6 +21,11 @@ final class Stream implements StreamInterface
         return $this->content;
     }
 
+    public static function fromString(string $content): self
+    {
+        return new self($content);
+    }
+
     public function read($length): string
     {
         $result = substr($this->content, $this->pointer, $length);

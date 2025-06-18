@@ -19,10 +19,8 @@ final class Kernel implements KernelInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // Vraag router om juiste controller (doet nog niks tot router is geimplementeerd)
         $handler = $this->router->route($request);
 
-        // Roep controller aan en geef response terug
         return $handler->handle($request);
     }
 }
