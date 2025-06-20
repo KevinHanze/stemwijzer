@@ -11,7 +11,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "Framework\\": "src/"
+      "Framework\\": "src/",
+      "App\\": "src/App"
     }
   },
   "require": {
@@ -20,6 +21,7 @@
     "psr/http-message": "^2.0",
     "psr/event-dispatcher": "^1.0",
     "psr/http-server-middleware": "^1.0",
-    "guzzlehttp/psr7": "^2.7"
+    "guzzlehttp/psr7": "^2.7",
+    "ext-pdo": "*"
   }
 }
