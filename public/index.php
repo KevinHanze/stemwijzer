@@ -1,76 +1,92 @@
 <?php
 
-declare(strict_types=1);
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Framework\AccessControl\User;
+use Framework\AccessControl\UserProvider;
+use Framework\AccessControl\Authentication;
+use Framework\AccessControl\Authorization;
+use Framework\Http\Middleware\SessionMiddleware;
+use Framework\Http\Middleware\AuthenticationMiddleware;
+use Framework\Http\Middleware\AuthorizationMiddleware;
 use Framework\Http\RequestFactory;
 use Framework\Http\Response;
 use Framework\Http\Stream;
-use Framework\Http\Middleware\SessionMiddleware;
-use Framework\Routing\Router;
 use Framework\Kernel\Kernel;
-use Framework\Routing\NotFoundException;
-use Psr\Http\Message\ResponseInterface;
+use Framework\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-$request = RequestFactory::fromGlobals();
+// create users
+$users = [
+1 => new User('kevin', password_hash('test', PASSWORD_DEFAULT), ['user']),
+2 => new User('admin', password_hash('admin', PASSWORD_DEFAULT), ['admin']),
+];
+
+$userProvider = new UserProvider($users);
+$authentication = new Authentication($userProvider);
+
+// Define roles
+$authorization = new Authorization([
+    'admin' => ['admin.area', 'user.manage'],
+    'user' => ['user.area'],
+    'guest' => [],
+]);
 
 $router = new Router();
 
-$middleware = [
+// set middleware pipeline
+$kernel = new Kernel($router, [
     new SessionMiddleware(),
-];
+    new AuthenticationMiddleware($authentication),
+    new AuthorizationMiddleware($authorization, [
+        '/admin' => 'admin.area',
+        '/user'  => 'user.area',
+    ])
+]);
 
-// Route 1: sets a value in $_SESSION
-$router->addRoute('GET', '/set-session', new class implements RequestHandlerInterface {
-    public function handle(ServerRequestInterface $request): ResponseInterface
+// Add test routes
+$router->addRoute('GET', '/login-as-admin', new class implements RequestHandlerInterface {
+    public function handle(ServerRequestInterface $request): Response
     {
-        $_SESSION['test'] = 'Hello from session!';
-        return new Response(
-            200,
-            ['Content-Type' => ['text/plain']],
-            Stream::fromString('Session value set.')
-        );
+        $_SESSION['user_id'] = 2; // Admin
+        return new Response(200, ['Content-Type' => ['text/plain']], new Stream("Logged in as admin"));
     }
 });
 
-// Route 2: reads the value from $_SESSION
-$router->addRoute('GET', '/get-session', new class implements RequestHandlerInterface {
-    public function handle(ServerRequestInterface $request): ResponseInterface
+$router->addRoute('GET', '/login-as-user', new class implements RequestHandlerInterface {
+    public function handle(ServerRequestInterface $request): Response
     {
-        $value = $_SESSION['test'] ?? 'No value in session.';
-        return new Response(
-            200,
-            ['Content-Type' => ['text/plain']],
-            Stream::fromString("Session value: {$value}")
-        );
+        $_SESSION['user_id'] = 1; // Normal user
+        return new Response(200, ['Content-Type' => ['text/plain']], new Stream("Logged in as user"));
     }
 });
 
-$kernel = new Kernel($router, $middleware);
+// Protected route
+$router->addRoute('GET', '/admin', new class implements RequestHandlerInterface {
+    public function handle(ServerRequestInterface $request): Response
+    {
+        $user = $request->getAttribute('user');
+        return new Response(200, ['Content-Type' => ['text/plain']], new Stream("Welkom, " . $user->getUsername()));
+    }
+});
+
+$request = RequestFactory::fromGlobals();
 
 try {
     $response = $kernel->handle($request);
-} catch (NotFoundException $e) {
-    $response = new Response(
-        404,
-        ['Content-Type' => ['text/plain']],
-        Stream::fromString("404 Not Found")
-    );
+} catch (\Framework\AccessControl\AccessDeniedException $e) {
+    $response = new Response(403, ['Content-Type' => ['text/plain']], Stream::fromString("Access denied: " . $e->getMessage()));
 } catch (\Throwable $e) {
-    $response = new Response(
-        500,
-        ['Content-Type' => ['text/plain']],
-        Stream::fromString("Internal Server Error:\n" . $e->getMessage())
-    );
+    $response = new Response(500, ['Content-Type' => ['text/plain']], Stream::fromString("Server error: " . $e->getMessage()));
 }
 
 http_response_code($response->getStatusCode());
+
 foreach ($response->getHeaders() as $name => $values) {
     foreach ($values as $value) {
         header("$name: $value", false);
     }
 }
+
 echo $response->getBody();

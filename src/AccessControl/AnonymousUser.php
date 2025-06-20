@@ -2,25 +2,10 @@
 
 namespace Framework\AccessControl;
 
-class AnonymousUser implements UserInterface
+class AnonymousUser extends User
 {
-    public function getUsername(): string
+    public function __construct()
     {
-        return 'anonymous';
-    }
-
-    public function getPasswordHash(): string
-    {
-        return '';
-    }
-
-    public function getRoles(): array
-    {
-        return [];
-    }
-
-    public function isAnonymous(): bool
-    {
-        return true;
+        parent::__construct('anonymous', '', [], true);
     }
 }

@@ -21,7 +21,6 @@ class Authorization implements AuthorizationInterface {
             }
         }
         return false;
-
     }
 
     public function denyUnlessGranted(UserInterface $user, string $permission, ...$parameters): void
