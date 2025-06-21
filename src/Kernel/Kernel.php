@@ -31,10 +31,8 @@ final class Kernel implements KernelInterface
 
     private function buildMiddlewareStack(array $middleware, callable $finalHandler): callable
     {
-        //"echte" handler komt als laatste in de stack
         $handler = $finalHandler;
 
-        //bouw middleware chain op (in reverse om volgorde te behouden) en voert proces methode aan voor alle middleware
         foreach (array_reverse($middleware) as $mw) {
             $next = $handler;
             $handler = fn(ServerRequestInterface $req) => $mw->process($req, new class($next) implements RequestHandlerInterface {
