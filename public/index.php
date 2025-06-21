@@ -2,24 +2,28 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Framework\Database\PdoConnection;
-use App\Mapper\UserMapper;
+use Framework\DependencyInjection\Container;
+use Psr\Container\NotFoundExceptionInterface;
 
-$db = new PdoConnection('sqlite:' . __DIR__ . '/../database.db');
+// Dummy services for testing
+class Logger {}
+class Service {
+    public function __construct(public Logger $logger) {}
+}
 
-$userMapper = new UserMapper($db);
+$container = new Container();
 
-$db->execute("
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password  TEXT NOT NULL,
-        roles     TEXT NOT NULL
-    )
-");
+// Basic
+$container->set('std', fn() => new stdClass());
+$std1 = $container->get('std');
+assert($std1 instanceof stdClass);
+echo "Basic service resolution\n";
 
-$user   = $userMapper->get(1);
-$admins = $userMapper->select(new Framework\Database\Query(['roles' => '["admin"]']));
+// Singleton
+$container->set('singleton', fn() => new stdClass(), true);
+$s1 = $container->get('singleton');
+$s2 = $container->get('singleton');
+assert($s1 === $s2);
+echo "Singleton instance sharing\n";
 
-print_r($user);
-print_r($admins);
+
