@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\HomeController;
 use Framework\AccessControl\User;
 use Framework\DependencyInjection\Container;
 use Framework\Database\PdoConnection;
@@ -12,7 +13,6 @@ use Framework\Http\Middleware\SessionMiddleware;
 use Framework\Http\Middleware\AuthenticationMiddleware;
 use Framework\Http\Middleware\AuthorizationMiddleware;
 use Framework\Templating\TemplateEngine;
-use App\Mapper\UserMapper;
 
 $container = new Container();
 
@@ -21,8 +21,10 @@ $container->set(PdoConnection::class, fn() => new PdoConnection('sqlite:' . __DI
 $container->set(Router::class, fn() => new Router(), true);
 $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/templates'), true);
 
-// Voeg Mapper toe
-$container->set(UserMapper::class, fn($c) => new UserMapper($c->get(PdoConnection::class)));
+// Voeg controler toe
+$container->set(HomeController::class, fn($c) => new HomeController(
+    $c->get(TemplateEngine::class)
+));
 
 // Access control
 $container->set(UserProvider::class, fn($c) => new UserProvider([

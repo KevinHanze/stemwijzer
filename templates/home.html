@@ -1,1 +1,7 @@
-<h1>Welkom</h1>
+<h1>Welkom {{ name }}</h1>
+
+{% if loggedIn %}
+<p>Je bent ingelogd.</p>
+{% else %}
+<p>Je bent niet ingelogd.</p>
+{% endif %}
