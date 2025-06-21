@@ -18,9 +18,6 @@ $db->execute("
     )
 ");
 
-$userMapper->insert(new App\Model\User(null, 'kevin', password_hash('test', PASSWORD_DEFAULT), ['user']));
-$userMapper->insert(new App\Model\User(null, 'ralf',  password_hash('test', PASSWORD_DEFAULT), ['admin']));
-
 $user   = $userMapper->get(1);
 $admins = $userMapper->select(new Framework\Database\Query(['roles' => '["admin"]']));
 
