@@ -1,7 +1,13 @@
-<h1>Welkom {{ name }}</h1>
+<h1>Welkom bij de Kieswijzer</h1>
+
+<p>Maak een keuze:</p>
+
+<a href="/form"><button>Kieswijzer invullen</button></a>
+<a href="/register"><button>Registreren</button></a>
 
 {% if loggedIn %}
-<p>Je bent ingelogd.</p>
+    <a href="/logout"><button>Uitloggen</button></a>
 {% else %}
-<p>Je bent niet ingelogd.</p>
+    <a href="/login"><button>Inloggen</button></a>
 {% endif %}
+

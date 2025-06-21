@@ -31,7 +31,7 @@ $view = $container->get(TemplateEngine::class);
 
 // Register routes
 $routes = require __DIR__ . '/../routes.php';
-$routes($router, $view);
+$routes($router, $view, $container);
 
 // Kernel
 $kernel = new Kernel($router, $middleware);

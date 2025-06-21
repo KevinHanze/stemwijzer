@@ -1,6 +1,9 @@
 <?php
 
 use App\Controller\HomeController;
+use App\Controller\LoginController;
+use App\Controller\RegisterController;
+use App\Mapper\UserMapper;
 use Framework\AccessControl\User;
 use Framework\DependencyInjection\Container;
 use Framework\Database\PdoConnection;
@@ -13,6 +16,8 @@ use Framework\Http\Middleware\SessionMiddleware;
 use Framework\Http\Middleware\AuthenticationMiddleware;
 use Framework\Http\Middleware\AuthorizationMiddleware;
 use Framework\Templating\TemplateEngine;
+use App\Controller\LogoutController;
+
 
 $container = new Container();
 
@@ -20,11 +25,6 @@ $container = new Container();
 $container->set(PdoConnection::class, fn() => new PdoConnection('sqlite:' . __DIR__ . '/database.db'), true);
 $container->set(Router::class, fn() => new Router(), true);
 $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/templates'), true);
-
-// Voeg controler toe
-$container->set(HomeController::class, fn($c) => new HomeController(
-    $c->get(TemplateEngine::class)
-));
 
 // Access control
 $container->set(UserProvider::class, fn($c) => new UserProvider([
@@ -52,5 +52,22 @@ $container->set(AuthorizationMiddleware::class, fn($c) => new AuthorizationMiddl
         '/party' => 'party.area'
     ]
 ));
+
+// Voeg controlers en mappers toe
+$container->set(HomeController::class, fn($c) => new HomeController(
+    $c->get(TemplateEngine::class)
+));
+$container->set(UserMapper::class, fn($c) => new UserMapper(
+    $c->get(PdoConnection::class)
+));
+$container->set(RegisterController::class, fn($c) => new RegisterController(
+    $c->get(TemplateEngine::class),
+    $c->get(UserMapper::class)
+));
+$container->set(LoginController::class, fn($c) => new LoginController(
+    $c->get(TemplateEngine::class),
+    $c->get(Authentication::class)
+));
+$container->set(LogoutController::class, fn() => new LogoutController());
 
 return $container;
