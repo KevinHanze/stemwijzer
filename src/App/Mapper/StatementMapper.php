@@ -4,7 +4,6 @@
 namespace App\Mapper;
 
 use App\Model\Statement;
-use App\Model\User;
 use Framework\Database\ConnectionInterface;
 use Framework\Database\DataMapperInterface;
 use Framework\Database\NotFoundException;

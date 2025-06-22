@@ -2,8 +2,8 @@
 <form method="GET" action="/">
     <button type="submit">Home</button>
 </form>
-
-<form method="POST" action="/submit-form">
+<hr>
+<form method="POST" action="/form">
     {% for statement in statements %}
     <div>
         <h3><b>{{ statement.text }}</b></h3>
@@ -15,7 +15,7 @@
         </label>
         {% endfor %}
     </div>
+    <hr>
     {% endfor %}
-    <br>
     <button type="submit">Verzenden</button>
 </form>

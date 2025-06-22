@@ -4,9 +4,15 @@ use App\Controller\AdminController;
 use App\Controller\FormController;
 use App\Controller\HomeController;
 use App\Controller\LoginController;
+use App\Controller\PartyController;
 use App\Controller\RegisterController;
+use App\Mapper\AnswerMapper;
 use App\Mapper\StatementMapper;
+use App\Mapper\StemwijzerMapper;
+use App\Mapper\UserAnswerMapper;
 use App\Mapper\UserMapper;
+use App\Repository\AnswerRepository;
+use App\Repository\UserAnswerRepository;
 use Framework\DependencyInjection\Container;
 use Framework\Database\PdoConnection;
 use Framework\Http\Middleware\ErrorMiddleware;
@@ -28,13 +34,29 @@ $container->set(PdoConnection::class, fn() => new PdoConnection('sqlite:' . __DI
 $container->set(Router::class, fn() => new Router(), true);
 $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/templates'), true);
 
-// Voeg mappers toe
+// Voeg mappers en repo's toe
 $container->set(UserMapper::class, fn($c) => new UserMapper(
     $c->get(PdoConnection::class)
 ));
 $container->set(StatementMapper::class, fn($c) => new StatementMapper(
     $c->get(PdoConnection::class)
 ));
+$container->set(AnswerMapper::class, fn($c) => new AnswerMapper(
+    $c->get(PdoConnection::class)
+));
+$container->set(UserAnswerMapper::class, fn($c) => new UserAnswerMapper(
+    $c->get(PdoConnection::class)
+));
+$container->set(StemwijzerMapper::class, fn($c) => new StemwijzerMapper(
+    $c->get(PdoConnection::class)
+));
+$container->set(AnswerRepository::class, fn($c) => new AnswerRepository(
+    $c->get(AnswerMapper::class)
+));
+$container->set(UserAnswerRepository::class, fn($c) => new UserAnswerRepository(
+    $c->get(UserAnswerMapper::class)
+));
+
 
 // Access control
 $container->set(UserProvider::class, fn($c) => new UserProvider($c->get(UserMapper::class)));
@@ -75,12 +97,20 @@ $container->set(LoginController::class, fn($c) => new LoginController(
 $container->set(LogoutController::class, fn() => new LogoutController());
 $container->set(FormController::class, fn($c) => new FormController(
     $c->get(TemplateEngine::class),
-    $c->get(StatementMapper::class)
+    $c->get(StatementMapper::class),
+    $c->get(StemwijzerMapper::class),
+    $c->get(UserAnswerRepository::class)
+
 ));
 $container->set(AdminController::class, fn($c) => new AdminController(
     $c->get(TemplateEngine::class),
     $c->get(StatementMapper::class),
     $c->get(UserMapper::class)
+));
+$container->set(PartyController::class, fn($c) => new PartyController(
+    $c->get(TemplateEngine::class),
+    $c->get(StatementMapper::class),
+    $c->get(AnswerRepository::class)
 ));
 
 return $container;
