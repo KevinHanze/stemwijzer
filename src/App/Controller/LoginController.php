@@ -29,12 +29,14 @@ class LoginController implements RequestHandlerInterface
         $user = $this->auth->authenticateCredentials($username, $password);
 
         if (!$user->isAnonymous()) {
-            $_SESSION['user_id'] = $user->getUsername();
+            $_SESSION['user_id'] = $user->getId();
             return new Response(302, ['Location' => ['/']]);
         }
 
         $html = $this->view->render('login.html', [
             'error' => 'Ongeldige gebruikersnaam of wachtwoord.',
+            'name' => $user->getUsername(),
+            'loggedIn' => true
         ]);
 
         return new Response(200, ['Content-Type' => ['text/html']], Stream::fromString($html));

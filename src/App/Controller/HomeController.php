@@ -17,7 +17,7 @@ class HomeController implements RequestHandlerInterface {
         $user = $request->getAttribute('user');
 
         $html = $this->view->render('home.html',
-            name: $user?->getUsername() ?? 'guest',
+            name: $user?->getUsername(),
             loggedIn: !$user?->isAnonymous()
         );
 

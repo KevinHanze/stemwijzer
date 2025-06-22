@@ -8,6 +8,12 @@ namespace Framework\AccessControl;
 interface UserInterface
 {
     /**
+     * Get the user's id.
+     * @return int
+     */
+    public function getId(): int;
+
+    /**
      * Get the user's username.
      * @return string
      */

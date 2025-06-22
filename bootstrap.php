@@ -26,12 +26,13 @@ $container->set(PdoConnection::class, fn() => new PdoConnection('sqlite:' . __DI
 $container->set(Router::class, fn() => new Router(), true);
 $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/templates'), true);
 
+// Voeg mappers toe
+$container->set(UserMapper::class, fn($c) => new UserMapper(
+    $c->get(PdoConnection::class)
+));
+
 // Access control
-$container->set(UserProvider::class, fn($c) => new UserProvider([
-    1 => new User('kevin', password_hash('test', PASSWORD_DEFAULT), ['user']),
-    2 => new User('admin', password_hash('admin', PASSWORD_DEFAULT), ['admin']),
-    3 => new User('party', password_hash('party', PASSWORD_DEFAULT), ['party'])
-]));
+$container->set(UserProvider::class, fn($c) => new UserProvider($c->get(UserMapper::class)));
 $container->set(Authentication::class, fn($c) => new Authentication($c->get(UserProvider::class)));
 $container->set(Authorization::class, fn() => new Authorization([
     'admin' => ['admin.area', 'user.manage'],
@@ -52,13 +53,9 @@ $container->set(AuthorizationMiddleware::class, fn($c) => new AuthorizationMiddl
         '/party' => 'party.area'
     ]
 ));
-
-// Voeg controlers en mappers toe
+// Voeg controllers toe
 $container->set(HomeController::class, fn($c) => new HomeController(
     $c->get(TemplateEngine::class)
-));
-$container->set(UserMapper::class, fn($c) => new UserMapper(
-    $c->get(PdoConnection::class)
 ));
 $container->set(RegisterController::class, fn($c) => new RegisterController(
     $c->get(TemplateEngine::class),

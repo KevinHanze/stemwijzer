@@ -2,27 +2,26 @@
 
 namespace Framework\AccessControl;
 
+use App\Mapper\UserMapper;
+use Framework\Database\NotFoundException;
+use Framework\Database\Query;
+
 class UserProvider implements UserProviderInterface
 {
-    private array $usersById = [];
-
-    private array $usersByUsername = [];
-
-    public function __construct(array $users = [])
-    {
-        foreach ($users as $id => $user) {
-            $this->usersById[$id] = $user;
-            $this->usersByUsername[$user->getUsername()] = $user;
-        }
-    }
+    public function __construct(private UserMapper $mapper) {}
 
     public function get(string $username): UserInterface
     {
-        return $this->usersByUsername[$username] ?? new AnonymousUser();
+        $list = $this->mapper->select(new Query(['username' => $username]));
+        return $list[0] ?? new AnonymousUser();
     }
 
     public function getById(int|string $id): ?UserInterface
     {
-        return $this->usersById[$id] ?? null;
+        try {
+            return $this->mapper->get((int)$id);
+        } catch (NotFoundException) {
+            return null;
+        }
     }
 }
