@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\AdminController;
 use App\Controller\FormController;
 use App\Controller\HomeController;
 use App\Controller\LoginController;
@@ -39,10 +40,10 @@ $container->set(StatementMapper::class, fn($c) => new StatementMapper(
 $container->set(UserProvider::class, fn($c) => new UserProvider($c->get(UserMapper::class)));
 $container->set(Authentication::class, fn($c) => new Authentication($c->get(UserProvider::class)));
 $container->set(Authorization::class, fn() => new Authorization([
-    'admin' => ['admin.area', 'user.manage'],
-    'user' => ['user.area'],
+    'admin' => ['admin.area'],
+    'user' => ['user.area', 'form.access'],
     'party' => ['party.area'],
-    'guest' => [],
+    'guest' => ['form.access'],
 ]));
 
 // Middleware
@@ -54,9 +55,11 @@ $container->set(AuthorizationMiddleware::class, fn($c) => new AuthorizationMiddl
     [
         '/admin' => 'admin.area',
         '/user' => 'user.area',
-        '/party' => 'party.area'
+        '/party' => 'party.area',
+        '/form' => 'form.access'
     ]
 ));
+
 // Voeg controllers toe
 $container->set(HomeController::class, fn($c) => new HomeController(
     $c->get(TemplateEngine::class)
@@ -73,6 +76,11 @@ $container->set(LogoutController::class, fn() => new LogoutController());
 $container->set(FormController::class, fn($c) => new FormController(
     $c->get(TemplateEngine::class),
     $c->get(StatementMapper::class)
+));
+$container->set(AdminController::class, fn($c) => new AdminController(
+    $c->get(TemplateEngine::class),
+    $c->get(StatementMapper::class),
+    $c->get(UserMapper::class)
 ));
 
 return $container;

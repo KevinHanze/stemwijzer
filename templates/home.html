@@ -2,12 +2,22 @@
 
 <p>Maak een keuze:</p>
 
-<a href="/form"><button>Kieswijzer invullen</button></a>
-<a href="/register"><button>Registreren</button></a>
-
 {% if loggedIn %}
     <a href="/logout"><button>Uitloggen</button></a>
 {% else %}
     <a href="/login"><button>Inloggen</button></a>
+    <a href="/register"><button>Registreren</button></a>
+{% endif %}
+
+{% if isAdmin %}
+    <a href="/admin"><button>Admin</button></a>
+{% endif %}
+
+{% if isParty %}
+    <a href="/party"><button>Kieswijzer invullen</button></a>
+{% endif %}
+
+{% if isUser %}
+    <a href="/form"><button>Kieswijzer invullen</button></a>
 {% endif %}
 

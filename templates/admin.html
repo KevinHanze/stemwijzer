@@ -1,0 +1,44 @@
+<h1>Adminpagina</h1>
+<form method="GET" action="/">
+    <button type="submit">Home</button>
+</form>
+
+<h2>Stellingen</h2>
+{% for statement in statements %}
+<form method="POST" action="/admin/delete-statement">
+    <input type="hidden" name="id" value="{{ statement.id }}">
+    <p>
+        {{ statement.text }}
+        <button type="submit">Verwijder</button>
+    </p>
+</form>
+{% endfor %}
+
+<form method="POST" action="/admin/add-statement">
+    <input type="text" name="text" placeholder="Nieuwe stelling" required>
+    <button type="submit">Voeg toe</button>
+</form>
+
+<h2>Gebruikers</h2>
+{% for user in users %}
+<form method="POST" action="/admin/delete-user">
+    <input type="hidden" name="id" value="{{ user.id }}">
+    <p>
+        <b>id:</b> {{ user.id }} - <b>Naam:</b> {{ user.username }}
+        <button type="submit">Verwijder</button>
+    </p>
+</form>
+{% endfor %}
+
+<form method="POST" action="/admin/add-user">
+    <input type="text" name="username" placeholder="Gebruikersnaam" required>
+    <input type="password" name="password" placeholder="Wachtwoord" required>
+    <select name="role">
+        <option value="user">Gebruiker</option>
+        <option value="party">Partij</option>
+        <option value="admin">Admin</option>
+    </select>
+    <button type="submit">Voeg toe</button>
+</form>
+
+
