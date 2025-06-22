@@ -1,0 +1,33 @@
+<h1>Partij pagina</h1>
+
+<form method="GET" action="/">
+    <button type="submit">Home</button>
+</form>
+
+<h2>Stellingen beantwoorden</h2>
+<hr>
+
+<form method="POST" action="/party">
+    {% for statement in statements %}
+    <div>
+        <h3><b>{{ statement.text }}</b></h3>
+
+        {% for value in options %}
+        <label>
+            <input type="radio" name="statement_{{ statement.id }}" value="{{ value }}">
+            {{ value }}
+        </label>
+        {% endfor %}
+
+        <br>
+        <label>
+            Toelichting:
+            <textarea name="reason_{{ statement.id }}"></textarea>
+        </label>
+    </div>
+    <hr>
+    {% endfor %}
+
+    <br>
+    <button type="submit">Verzenden</button>
+</form>

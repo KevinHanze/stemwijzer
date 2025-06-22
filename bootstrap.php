@@ -76,7 +76,7 @@ $container->set(AuthorizationMiddleware::class, fn($c) => new AuthorizationMiddl
     $c->get(Authorization::class),
     [
         '/admin' => 'admin.area',
-        '/user' => 'user.area',
+        '/results' => 'user.area',
         '/party' => 'party.area',
         '/form' => 'form.access'
     ]
