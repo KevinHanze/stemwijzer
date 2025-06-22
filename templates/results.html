@@ -1,0 +1,15 @@
+<h1>Resultaten van jouw ingevulde Kieswijzers</h1>
+<form method="GET" action="/">
+    <button type="submit">Home</button>
+</form>
+
+
+{% if stemwijzers %}
+{% for stemwijzer in stemwijzers %}
+    <p><strong>Ingevuld op:</strong> {{ stemwijzer.submittedAt }}</p>
+    <p><strong>Best passende partij(en):</strong> {{ stemwijzer.matchedParties }}</p>
+<hr>
+{% endfor %}
+{% else %}
+<p>Je hebt nog geen Kieswijzer ingevuld.</p>
+{% endif %}

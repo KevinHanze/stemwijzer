@@ -7,6 +7,7 @@ use App\Controller\LoginController;
 use App\Controller\LogoutController;
 use App\Controller\PartyController;
 use App\Controller\RegisterController;
+use App\Controller\ResultController;
 use Framework\DependencyInjection\Container;
 use Framework\Routing\Router;
 use Framework\Templating\TemplateEngine;
@@ -27,4 +28,5 @@ return function (Router $router, TemplateEngine $view, Container $container) {
     $router->addRoute('POST', '/admin/delete-user', $container->get(AdminController::class));
     $router->addRoute('POST', '/party', $container->get(PartyController::class));
     $router->addRoute('GET', '/party', $container->get(PartyController::class));
+    $router->addRoute('GET', '/results', $container->get(ResultController::class));
 };

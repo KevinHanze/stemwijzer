@@ -6,6 +6,7 @@ use App\Controller\HomeController;
 use App\Controller\LoginController;
 use App\Controller\PartyController;
 use App\Controller\RegisterController;
+use App\Controller\ResultController;
 use App\Mapper\AnswerMapper;
 use App\Mapper\StatementMapper;
 use App\Mapper\StemwijzerMapper;
@@ -99,8 +100,9 @@ $container->set(FormController::class, fn($c) => new FormController(
     $c->get(TemplateEngine::class),
     $c->get(StatementMapper::class),
     $c->get(StemwijzerMapper::class),
-    $c->get(UserAnswerRepository::class)
-
+    $c->get(UserAnswerRepository::class),
+    $c->get(AnswerMapper::class),
+    $c->get(UserMapper::class)
 ));
 $container->set(AdminController::class, fn($c) => new AdminController(
     $c->get(TemplateEngine::class),
@@ -111,6 +113,10 @@ $container->set(PartyController::class, fn($c) => new PartyController(
     $c->get(TemplateEngine::class),
     $c->get(StatementMapper::class),
     $c->get(AnswerRepository::class)
+));
+$container->set(ResultController::class, fn($c) => new ResultController(
+    $c->get(TemplateEngine::class),
+    $c->get(StemwijzerMapper::class)
 ));
 
 return $container;

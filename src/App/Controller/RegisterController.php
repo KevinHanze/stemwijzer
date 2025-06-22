@@ -37,7 +37,7 @@ class RegisterController implements RequestHandlerInterface
 
                 return new Response(
                     302,
-                    ['Location' => ['/']],
+                    ['Location' => ['/login']],
                     Stream::fromString('')
                 );
             }
