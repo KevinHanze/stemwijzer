@@ -25,10 +25,6 @@ class ResultController implements RequestHandlerInterface
             'user_id' => $user->getId()
         ]));
 
-        $parties = $stemwijzers[1]->matchedParties;
-
-        echo $parties;
-
         $html = $this->view->render('results.html',
             stemwijzers: $stemwijzers,
             name: $user->getUsername()

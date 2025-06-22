@@ -3,6 +3,11 @@
     <button type="submit">Home</button>
 </form>
 <hr>
+{% if matchedParties %}
+    <h2>Resultaat</h2>
+    <p>Je komt het meest overeen met:</p>
+    <strong>{{ matchedParties }}</strong>
+{% else %}
 <form method="POST" action="/form">
     {% for statement in statements %}
     <div>
@@ -19,3 +24,5 @@
     {% endfor %}
     <button type="submit">Verzenden</button>
 </form>
+{% endif %}
+
