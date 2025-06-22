@@ -85,8 +85,6 @@ final class Uri implements UriInterface
         return $uri;
     }
 
-    // ---- Immutability (withX) methods ----
-
     public function withScheme($scheme): Uri
     {
         $clone = clone $this;
