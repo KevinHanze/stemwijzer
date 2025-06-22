@@ -7,7 +7,13 @@ namespace Framework\Routing;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Represents a single route in the application.
+ *
+ * Holds the HTTP method, path, and handler for the route.
+ */
 final class Route {
+
     private string $method;
     private string $path;
     private RequestHandlerInterface $handler;
@@ -19,12 +25,15 @@ final class Route {
         $this->handler = $handler;
     }
 
+    /**
+     * Checks if this route matches the given request.
+     */
     public function matches(ServerRequestInterface $request): bool {
         return $this->method === strtoupper($request->getMethod())
             && $this->path === $request->getUri()->getPath();
     }
 
- public function getHandler(): RequestHandlerInterface {
+    public function getHandler(): RequestHandlerInterface {
 
     return $this->handler;
     }

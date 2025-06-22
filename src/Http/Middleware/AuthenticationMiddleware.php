@@ -7,6 +7,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Middleware that handles user authentication.
+ *
+ * Adds the authenticated user to the request attributes.
+ */
 class AuthenticationMiddleware implements MiddlewareInterface
 {
     private AuthenticationInterface $authentication;
@@ -16,13 +21,20 @@ class AuthenticationMiddleware implements MiddlewareInterface
         $this->authentication = $authentication;
     }
 
-    // Authenticate request to return user, add user to request attributes  and call next middleware or handler
+    /**
+     * Authenticates the request and adds the user to the request attributes.
+     *
+     * Passes the request along the middleware stack.
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // Attempt to authenticate the incoming request
         $user = $this->authentication->authenticate($request);
 
+        // Attach the authenticated user to the request
         $request = $request->withAttribute('user', $user);
 
+        // Forward the request to the next middleware or handler
         return $handler->handle($request);
     }
 }

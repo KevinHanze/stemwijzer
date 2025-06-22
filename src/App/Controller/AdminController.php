@@ -13,6 +13,11 @@ use Framework\Templating\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Controller that handles basic admin actions:
+ * - Manage statements and users (add/delete)
+ * - Render the admin dashboard
+ */
 class AdminController implements RequestHandlerInterface
 {
     public function __construct(
@@ -21,12 +26,22 @@ class AdminController implements RequestHandlerInterface
         private UserMapper $users
     ) {}
 
+    /**
+     * Handles GET and POST requests to the /admin dashboard.
+     *
+     * POST routes:
+     * - /admin/add-statement
+     * - /admin/delete-statement
+     * - /admin/add-user
+     * - /admin/delete-user
+     */
     public function handle(ServerRequestInterface $request): Response
     {
         if ($request->getMethod() === 'POST') {
             $data = $request->getParsedBody();
             $path = $request->getUri()->getPath();
 
+            // Match route to form handler
             return match ($path) {
                 '/admin/add-statement' => $this->addStatement($data),
                 '/admin/delete-statement' => $this->deleteStatement($data),
@@ -36,6 +51,7 @@ class AdminController implements RequestHandlerInterface
             };
         }
 
+        // Render admin dashboard
         $statements = $this->statements->select(new Query([]));
         $users = $this->users->select(new Query([]));
         $user = $request->getAttribute('user');

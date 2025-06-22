@@ -35,7 +35,7 @@ $container->set(PdoConnection::class, fn() => new PdoConnection('sqlite:' . __DI
 $container->set(Router::class, fn() => new Router(), true);
 $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/templates'), true);
 
-// Voeg mappers en repo's toe
+// Add mappers and repositories
 $container->set(UserMapper::class, fn($c) => new UserMapper(
     $c->get(PdoConnection::class)
 ));
@@ -83,7 +83,7 @@ $container->set(AuthorizationMiddleware::class, fn($c) => new AuthorizationMiddl
     ]
 ));
 
-// Voeg controllers toe
+// Add controllers
 $container->set(HomeController::class, fn($c) => new HomeController(
     $c->get(TemplateEngine::class)
 ));
@@ -119,4 +119,5 @@ $container->set(ResultController::class, fn($c) => new ResultController(
     $c->get(StemwijzerMapper::class)
 ));
 
+// return initialized container
 return $container;

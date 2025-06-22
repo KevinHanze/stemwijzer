@@ -12,6 +12,9 @@ use Framework\Http\Stream;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Controller for party users to submit their answers and reasoning.
+ */
 class PartyController implements RequestHandlerInterface
 {
     public function __construct(
@@ -20,6 +23,9 @@ class PartyController implements RequestHandlerInterface
         private AnswerRepository $answers
     ) {}
 
+    /**
+     * Handles GET to show the answer form, and POST to save party answers and reasoning.
+     */
     public function handle(ServerRequestInterface $request): Response
     {
         $user = $request->getAttribute('user');
@@ -45,9 +51,11 @@ class PartyController implements RequestHandlerInterface
                 }
             }
 
+            // Redirect after submission
             return new Response(302, ['Location' => ['/party']]);
         }
 
+        // Show the form with all statements
         $statements = $this->statements->select(new Query([]));
 
         $html = $this->view->render('party.html',

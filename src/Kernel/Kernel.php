@@ -9,6 +9,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Core framework kernel that handles incoming HTTP requests.
+ *
+ * Builds and executes the middleware stack, ending with routing resolution.
+ */
 final class Kernel implements KernelInterface
 {
     private RouterInterface $router;
@@ -20,6 +25,11 @@ final class Kernel implements KernelInterface
         $this->middleware = $middleware;
     }
 
+    /**
+     * Entry point for handling a request.
+     *
+     * Builds the middleware stack and passes the request through it.
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $handler = $this->buildMiddlewareStack($this->middleware, function (ServerRequestInterface $req) {
@@ -29,6 +39,11 @@ final class Kernel implements KernelInterface
         return $handler($request);
     }
 
+    /**
+     * Wraps all middleware around the final handler in reverse order.
+     *
+     * Each middleware gets a RequestHandler that continues the chain.
+     */
     private function buildMiddlewareStack(array $middleware, callable $finalHandler): callable
     {
         $handler = $finalHandler;

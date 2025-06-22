@@ -9,6 +9,9 @@ use Framework\Templating\TemplateEngine;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Controller that handles login logic and session initialization.
+ */
 class LoginController implements RequestHandlerInterface
 {
     public function __construct(
@@ -16,12 +19,17 @@ class LoginController implements RequestHandlerInterface
         private Authentication $auth
     ) {}
 
+    /**
+     * Renders the login page (GET) or processes login credentials (POST).
+     */
     public function handle(ServerRequestInterface $request): Response
     {
         if ($request->getMethod() === 'GET') {
             $html = $this->view->render('login.html');
             return new Response(200, ['Content-Type' => ['text/html']], Stream::fromString($html));
         }
+
+        // Handle login submission
         $data = $request->getParsedBody();
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
@@ -29,12 +37,14 @@ class LoginController implements RequestHandlerInterface
         $user = $this->auth->authenticateCredentials($username, $password);
 
         if (!$user->isAnonymous()) {
+
+            // Set session user ID and redirect to homepage
             $_SESSION['user_id'] = $user->getId();
             return new Response(302, ['Location' => ['/']]);
         }
 
+        // Login failed — re-render
         $html = $this->view->render('login.html', [
-            'error' => 'Ongeldige gebruikersnaam of wachtwoord.',
             'name' => $user->getUsername(),
             'loggedIn' => true
         ]);

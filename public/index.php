@@ -17,7 +17,7 @@ use Framework\Templating\TemplateEngine;
 $container = require __DIR__ . '/../bootstrap.php';
 $request = RequestFactory::fromGlobals();
 
-// Bouw middleware pipeline
+// Build middleware pipeline
 $middleware = [
     $container->get(ErrorMiddleware::class),
     $container->get(SessionMiddleware::class),
@@ -39,13 +39,14 @@ $kernel = new Kernel($router, $middleware);
 // Run
 $response = $kernel->handle($request);
 
-// Stuur response
+// Send response
 http_response_code($response->getStatusCode());
 foreach ($response->getHeaders() as $name => $values) {
     foreach ($values as $value) {
         header("$name: $value", false);
     }
 }
+
 echo $response->getBody();
 
 

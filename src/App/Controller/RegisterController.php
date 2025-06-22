@@ -10,6 +10,9 @@ use Framework\Http\Stream;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Controller that handles user registration.
+ */
 class RegisterController implements RequestHandlerInterface
 {
     public function __construct(
@@ -17,6 +20,9 @@ class RegisterController implements RequestHandlerInterface
         private UserMapper $userMapper
     ) {}
 
+    /**
+     * Shows the registration form or processes a submitted registration.
+     */
     public function handle(ServerRequestInterface $request): Response
     {
         if ($request->getMethod() === 'POST') {
@@ -35,6 +41,7 @@ class RegisterController implements RequestHandlerInterface
 
                 $this->userMapper->insert($user);
 
+                // Redirect to login after successful registration
                 return new Response(
                     302,
                     ['Location' => ['/login']],
@@ -43,6 +50,7 @@ class RegisterController implements RequestHandlerInterface
             }
         }
 
+        // Show registration form
         $html = $this->view->render('register.html');
         return new Response(200, ['Content-Type' => ['text/html']], Stream::fromString($html));
     }
