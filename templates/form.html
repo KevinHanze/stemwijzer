@@ -1,0 +1,18 @@
+<h1>Stemwijzer</h1>
+
+<form method="POST" action="/submit-form">
+    {% for statement in statements %}
+    <div>
+        <h3><b>{{ statement.text }}</b></h3>
+
+        {% for value in options %}
+        <label>
+            <input type="radio" name="statement_{{ statement.id }}" value="{{ value }}">
+            {{ value }}
+        </label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <br>
+    <button type="submit">Verzenden</button>
+</form>

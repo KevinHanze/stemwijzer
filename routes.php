@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\FormController;
 use App\Controller\HomeController;
 use App\Controller\LoginController;
 use App\Controller\LogoutController;
@@ -15,4 +16,6 @@ return function (Router $router, TemplateEngine $view, Container $container) {
     $router->addRoute('GET', '/login', $container->get(LoginController::class));
     $router->addRoute('POST', '/login', $container->get(LoginController::class));
     $router->addRoute('GET', '/logout', $container->get(LogoutController::class));
+    $router->addRoute('GET', '/form', $container->get(FormController::class));
+
 };
