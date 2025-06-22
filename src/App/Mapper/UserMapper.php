@@ -55,7 +55,7 @@ class UserMapper implements DataMapperInterface {
         $this->db->execute(
             'UPDATE users SET username = ?, password = ?, roles = ? WHERE id = ?',
             $object->username,
-            $object->passwordHash,
+            $object->password,
             json_encode($object->roles),
             $object->id
         );
