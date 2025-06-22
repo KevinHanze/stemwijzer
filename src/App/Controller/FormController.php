@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Mapper\AnswerMapper;
 use App\Mapper\StatementMapper;
 use App\Mapper\StemwijzerMapper;
+use App\Mapper\UserMapper;
 use App\Repository\UserAnswerRepository;
 use App\Model\Stemwijzer;
 use App\Model\UserAnswer;
@@ -20,7 +22,9 @@ class FormController implements RequestHandlerInterface
         private TemplateEngine $view,
         private StatementMapper $statements,
         private StemwijzerMapper $stemwijzers,
-        private UserAnswerRepository $userAnswers
+        private UserAnswerRepository $userAnswers,
+        private AnswerMapper $answerMapper,
+        private UserMapper $userMapper,
     ) {}
 
     public function handle(ServerRequestInterface $request): Response
@@ -29,12 +33,7 @@ class FormController implements RequestHandlerInterface
         $isPost = $request->getMethod() === 'POST';
 
         if ($isPost) {
-            if ($user?->isAnonymous()) {
-                return new Response(403, ['Content-Type' => ['text/plain']], Stream::fromString("Niet toegestaan."));
-            }
-
-            // Maak nieuwe stemwijzer entry aan
-            $stemwijzer = new Stemwijzer(null, $user->getId(), null);
+            $stemwijzer = new Stemwijzer(null, $user->getId(), null, '');
             $this->stemwijzers->insert($stemwijzer);
 
             $data = $request->getParsedBody();
@@ -45,6 +44,10 @@ class FormController implements RequestHandlerInterface
                     $this->userAnswers->upsert($answer);
                 }
             }
+
+            $matchedParties = $this->determineMatchedParties($user->getId(), $stemwijzer->id);
+            $stemwijzer->matchedParties = implode(', ', $matchedParties);
+            $this->stemwijzers->update($stemwijzer);
 
             return new Response(302, ['Location' => ['/']]);
         }
@@ -58,5 +61,40 @@ class FormController implements RequestHandlerInterface
         );
 
         return new Response(200, ['Content-Type' => ['text/html']], Stream::fromString($html));
+    }
+
+    private function determineMatchedParties(int $userId, int $stemwijzerId): array
+    {
+        $partyAnswers = [];
+        foreach ($this->answerMapper->select(new Query([])) as $pa) {
+            $partyAnswers[$pa->userId][$pa->statementId] = $pa->answer;
+        }
+
+        $userAnswers = $this->userAnswers->getByUserId($userId, $stemwijzerId);
+
+        $scores = [];
+        foreach ($partyAnswers as $userId => $answers) {
+            $matchCount = 0;
+
+            foreach ($userAnswers as $ua) {
+                if (isset($answers[$ua->statementId]) && $answers[$ua->statementId] === $ua->answer) {
+                    $matchCount++;
+                }
+            }
+
+            $scores[$userId] = $matchCount;
+        }
+
+        $max = empty($scores) ? 0 : max($scores);
+        $matched = [];
+
+        foreach ($scores as $userId => $score) {
+            if ($score === $max && $score > 0) {
+                $party = $this->userMapper->get($userId);
+                $matched[] = $party->username;
+            }
+        }
+
+        return $matched;
     }
 }
