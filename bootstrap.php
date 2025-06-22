@@ -1,10 +1,11 @@
 <?php
 
+use App\Controller\FormController;
 use App\Controller\HomeController;
 use App\Controller\LoginController;
 use App\Controller\RegisterController;
+use App\Mapper\StatementMapper;
 use App\Mapper\UserMapper;
-use Framework\AccessControl\User;
 use Framework\DependencyInjection\Container;
 use Framework\Database\PdoConnection;
 use Framework\Http\Middleware\ErrorMiddleware;
@@ -28,6 +29,9 @@ $container->set(TemplateEngine::class, fn() => new TemplateEngine(__DIR__ . '/te
 
 // Voeg mappers toe
 $container->set(UserMapper::class, fn($c) => new UserMapper(
+    $c->get(PdoConnection::class)
+));
+$container->set(StatementMapper::class, fn($c) => new StatementMapper(
     $c->get(PdoConnection::class)
 ));
 
@@ -66,5 +70,9 @@ $container->set(LoginController::class, fn($c) => new LoginController(
     $c->get(Authentication::class)
 ));
 $container->set(LogoutController::class, fn() => new LogoutController());
+$container->set(FormController::class, fn($c) => new FormController(
+    $c->get(TemplateEngine::class),
+    $c->get(StatementMapper::class)
+));
 
 return $container;
