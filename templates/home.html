@@ -1,24 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Stemwijzer {{ name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        a {
+            text-decoration: none;
+            margin: 10px;
+        }
+
+        button {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #003d99;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
 <h1>Welkom bij de Stemwijzer {{ name }}</h1>
 
 <p>Maak een keuze:</p>
 
-{% if loggedIn %}
+<div class="button-container">
+    {% if loggedIn %}
     <a href="/logout"><button>Uitloggen</button></a>
-{% else %}
+    {% else %}
     <a href="/login"><button>Inloggen</button></a>
     <a href="/register"><button>Registreren</button></a>
-{% endif %}
+    {% endif %}
 
-{% if isAdmin %}
+    {% if isAdmin %}
     <a href="/admin"><button>Admin</button></a>
-{% endif %}
+    {% endif %}
 
-{% if isParty %}
+    {% if isParty %}
     <a href="/party"><button>Partij pagina</button></a>
-{% endif %}
+    {% endif %}
 
-{% if isUser %}
-    <a href="/form"><button>Kieswijzer invullen</button></a>
+    {% if isUser %}
+    <a href="/form"><button>Stemwijzer invullen</button></a>
     <a href="/results"><button>Resultaten</button></a>
-{% endif %}
+    {% endif %}
+</div>
 
+</body>
+</html>

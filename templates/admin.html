@@ -1,9 +1,86 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Adminpagina</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            margin: 10px auto;
+            max-width: 800px;
+            text-align: left;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 16px;
+            color: #444;
+            margin: 10px 0;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            padding: 8px;
+            margin: 5px 10px 10px 0;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 20px);
+            max-width: 400px;
+        }
+
+        button {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #003d99;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+
+        select {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+
 <h1>Adminpagina</h1>
+
 <form method="GET" action="/">
     <button type="submit">Home</button>
 </form>
 
 <h2>Stellingen</h2>
+
 {% for statement in statements %}
 <form method="POST" action="/admin/delete-statement">
     <input type="hidden" name="id" value="{{ statement.id }}">
@@ -19,12 +96,15 @@
     <button type="submit">Voeg toe</button>
 </form>
 
+<hr>
+
 <h2>Gebruikers</h2>
+
 {% for user in users %}
 <form method="POST" action="/admin/delete-user">
     <input type="hidden" name="id" value="{{ user.id }}">
     <p>
-        <b>id:</b> {{ user.id }} - <b>Naam:</b> {{ user.username }}
+        <b>id:</b> {{ user.id }} – <b>Naam:</b> {{ user.username }}
         <button type="submit">Verwijder</button>
     </p>
 </form>
@@ -41,4 +121,5 @@
     <button type="submit">Voeg toe</button>
 </form>
 
-
+</body>
+</html>

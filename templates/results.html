@@ -1,15 +1,86 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultaten</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: left;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #003d99;
+        }
+
+        p {
+            font-size: 16px;
+            color: #444;
+            margin: 10px 0;
+        }
+
+        strong {
+            color: #222;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
 <h1>Resultaten van jouw ingevulde Kieswijzers</h1>
+
 <form method="GET" action="/">
     <button type="submit">Home</button>
 </form>
 
+<br>
 
-{% if stemwijzers %}
-{% for stemwijzer in stemwijzers %}
-    <p><strong>Ingevuld op:</strong> {{ stemwijzer.submittedAt }}</p>
-    <p><strong>Best passende partij(en):</strong> {{ stemwijzer.matchedParties }}</p>
-<hr>
-{% endfor %}
-{% else %}
-<p>Je hebt nog geen Kieswijzer ingevuld.</p>
-{% endif %}
+<div>
+    {% if stemwijzers %}
+    {% for stemwijzer in stemwijzers %}
+    <form>
+        <p><strong>Ingevuld op:</strong> {{ stemwijzer.submittedAt }}</p>
+        <p><strong>Best passende partij(en):</strong> {{ stemwijzer.matchedParties }}</p>
+    </form>
+    <hr>
+    {% endfor %}
+    {% else %}
+    <p>Je hebt nog geen Kieswijzer ingevuld.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
